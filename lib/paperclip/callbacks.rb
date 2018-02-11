@@ -24,7 +24,13 @@ module Paperclip
 
       def callback_terminator
         if ::ActiveSupport::VERSION::STRING >= '4.1'
-          lambda { |target, result| result == false }
+          lambda do |_, result|
+            if result.respond_to?(:call)
+              result.call == false
+            else
+              result == false
+            end
+          end
         else
           'result == false'
         end
